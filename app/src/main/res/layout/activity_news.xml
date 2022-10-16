@@ -4,7 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ui.NewsActivity">
+
+<!--
+
+Frame layout here is just a container , i=even if we removed it , nothing will be affected
+
+-->
 
     <FrameLayout
         android:id="@+id/flFragment"
@@ -16,15 +22,34 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
+<!--
+1-id:id of the navHostFragment
+2-name:used to state that we're using navigation system in this fragment
+3-nav_graph:the nav graph that we will use here and we already created it in the navigation resource file
+4-this is the most important view here the NavHost fragment which is the container that will occupy all the fragments
+inside it and this can not be removed 
+-->
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/newsNavHostFragment"
+        app:defaultNavHost="true"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        app:navGraph="@navigation/news_nav_graph"/>
 
     </FrameLayout>
 
+<!--
+1-in order to put the menu list we created in this bottom Navigation menu
+we create menu attributes which is the menu name we created and listed items in it of fragments we will use
+
+-->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_navigation_menu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"/>

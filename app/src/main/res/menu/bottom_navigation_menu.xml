@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+<!--
+Menu to create and inflate in bottom navigation bar in activity as to use it to navigate between fragment
+
+each item created is declaration for a fragment in this bottom navigation bar
+each item can have so many attributes as title , icon
+the id must be exactly the same id given to fragment in the navigation file "the news_nav_graph file"
+
+we did not put the article fragment because it's not a base fragment
+it will be internal fragment that we will navigate to it by one of those three here
+
+
+-->
+    <item android:id="@+id/breakingNewsFragment"
+        android:title="Breaking News"
+        android:icon="@drawable/ic_breaking_news"/>
+
+    <item android:id="@+id/savedNewsFragment"
+        android:title="Saved News"
+        android:icon="@drawable/ic_favorite"/>
+
+    <item android:id="@+id/searchNewsFragment"
+        android:title="Search News"
+        android:icon="@drawable/ic_all_news"/>
+
+</menu>
