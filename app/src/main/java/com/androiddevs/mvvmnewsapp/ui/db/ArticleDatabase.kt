@@ -4,7 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.androiddevs.mvvmnewsapp.ui.Article
+import androidx.room.TypeConverters
+import com.androiddevs.mvvmnewsapp.ui.models.Article
 
 
 /**
@@ -26,13 +27,24 @@ import com.androiddevs.mvvmnewsapp.ui.Article
     entities =[Article::class],
     version =1
 )
-
+//this annotation to inform Room instance class to use this type converters in case convert any special class needed other than normal classes as string for ex
+//for ex we have class Source so to use this converter class to convert from and to source to be use dby ROOM database
+@TypeConverters(
+    Converters::class
+)
 //this class must inherit from ROOM database class as to get it's properties
 abstract class ArticleDatabase:RoomDatabase() {
     //here we specify that the function articleDao is providing us with the interface to access the database that contains articles entity
     abstract fun getArticleDao():ArticlesDao
 
-    //companion object is used to make anything singleton , the difference between it and object that companion object can be used inside class
+    /**
+     * the difference between companion object and object
+     *
+     * 1-object is definition of singleton but in kotlin , only one instance is created and used throught the whole app
+     * 2-companion object act as static but this static object is not singleton as at a certain case it can access by two threads which leads to creating more than
+     * one object so we need to make it singleton like it's usage here
+     *
+     */
     //but object is a type of class and we don't put it inside , we create it as single class like data class for ex
     //using volatile annotation as to make it memory safe that if tow threads access the database at same time they can both the changes directly , because
     //value changes directly in memory
@@ -44,8 +56,8 @@ abstract class ArticleDatabase:RoomDatabase() {
 
 
 
-        //one way of create singleton instance of Room database
-        //to check first if the instance is null , so create synchronized block to create the needed database objedt
+        //one way of create singleton instance of Room database , this is the java way
+        //to check first if the instance is null , so create synchronized block to create the needed database object
 //        fun getInstance(context: Context):ArticleDatabase?{
 //            if(instance==null){
 //                synchronized(ArticleDatabase::class){
@@ -55,7 +67,7 @@ abstract class ArticleDatabase:RoomDatabase() {
 //            return instance
 //        }
 
-        //other way of create singleton instance of Room database
+        //other way of create singleton instance of Room database , this is the kotlin way
         /**
          * create function of type operator and is called whenever we create instance of of roomDatabase
          * and will equalized the function with the instance of articleDatabaseCreated
@@ -65,6 +77,14 @@ abstract class ArticleDatabase:RoomDatabase() {
          * and all other will access it after creation , which one can enter , the faster
          *
          * then inside will check again , if instance is null , create the database instance and give the value created to our variable instance
+         *
+         *
+         * the operator fun , is created whenever we create instance of this class at any place , the invoke word is just name
+         *
+         * note that when creating instance of class in kotlin , we say var data = data() unlike in java we say , Data data = new data
+         *
+         * so when in kotlin we say val data = Data() it's the same that if we are using invoke , it's val data = Data.invoke() as since invoke is opertaor fun ,
+         * it will be created directly when we create instance of class
          *
          */
         operator fun invoke(context:Context)= instance ?: synchronized(LOCK){

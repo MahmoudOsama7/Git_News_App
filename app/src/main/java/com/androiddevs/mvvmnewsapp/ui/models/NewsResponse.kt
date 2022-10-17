@@ -1,7 +1,4 @@
-package com.androiddevs.mvvmnewsapp.ui
-
-import com.google.gson.annotations.SerializedName
-
+package com.androiddevs.mvvmnewsapp.ui.models
 
 
 data class NewsResponse(
