@@ -24,6 +24,7 @@ Frame layout here is just a container , i=even if we removed it , nothing will b
 
 <!--
 1-id:id of the navHostFragment
+
 2-name:used to state that we're using navigation system in this fragment
 3-nav_graph:the nav graph that we will use here and we already created it in the navigation resource file
 4-this is the most important view here the NavHost fragment which is the container that will occupy all the fragments
