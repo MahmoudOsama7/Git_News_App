@@ -58,12 +58,18 @@ class NewsAdapter :RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>(){
             tvPublishedAt.text=article.publishedAt
             //calling the function setOnItemClickListener we created
 
-            setOnItemClickListener {
-                //checking if onItemClickListener= null or not , by using the let code that executes if the value not null
-                //if = null do nothing , but if not , pass the article to this variable of type function takes parameter of type article , defined downwards
+
+            //set on click listener is triggered for this item in the recyclerView
+            //when clicking on an item , will do the implementation inside it which is calling onItemClickListener
+            //the implementation is to call the variable of type function onItemClickListener
+            //so inside setOnClickListener will call the onItemClickListener and give it some properties that is
+            //the parameter of the onItemClickListener which is function of type lambda and takes article and inside this let
+            //we have reference to the parameter by using it so will call it(article)
+            //meaning that our variable now which is onItemClickListener is function of type lambda that will take parameter article of type article
+            //and will return nothing and this will be called only if the onItemClickListener is not equal to null , thanks to let block
+            setOnClickListener {
                 onItemClickListener?.let {
-                    it(article)
-                }
+                    it(article) }
             }
         }
     }
@@ -79,13 +85,14 @@ class NewsAdapter :RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>(){
      * then we call the function setOnItemClickListener
      */
 
-    //variable of type lambda function that takes variable article and returns nothing
+    //variable of type lambda function that takes variable article and returns nothing and this variable equals null for now
     private var onItemClickListener:((Article)->Unit)?=null
 
     //function that takes parameter of type function and this function  takes parameter of type article and
     //returns nothing
-    //inside thi function we set the function listener we created with the function listener passed
+    //inside this function we set the function listener we created with the function listener passed
     fun setOnItemClickListener(listener:(Article)->Unit){
+        //here the onItemClickListener will take the value of passed listener
         onItemClickListener=listener
     }
 
