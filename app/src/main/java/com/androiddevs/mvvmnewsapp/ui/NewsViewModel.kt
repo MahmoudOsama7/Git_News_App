@@ -9,6 +9,7 @@ import com.androiddevs.mvvmnewsapp.ui.util.Resource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 class NewsViewModel(
     val newsRepository: NewsRepository
@@ -28,10 +29,21 @@ class NewsViewModel(
             //start the loading that represents the loading of network call
             breakingNews.postValue(Resource.Loading())
             val response = newsRepository.getBreakingNews(countryCode,breakingNewsPage)
+            //here the breakingNewsMutableLiveData will have the value of either Resource.Success or Resource.Error and inside this Resource will have either
+            //the data or the error message
+            breakingNews.postValue(handleNewsResponse(response))
         }
     }
 
-    private fun handleNewsResponse(){
-
+    private fun handleNewsResponse(response: Response<NewsResponse>):Resource<NewsResponse>{
+        //checking if response is success , will return Resource.Success and the response itself
+        if(response.isSuccessful){
+            //after checking response is successful , will check it's not null and will use let that only perform the inside block of code if response not null
+            response.body()?.let {  resultResponse->
+                return Resource.Success(resultResponse)
+            }
+        }
+        //checking if response is error , will return Resource.Error and the error message
+        return Resource.Error(response.message())
     }
 }
