@@ -30,11 +30,12 @@ class NewsViewModel(
             breakingNews.postValue(Resource.Loading())
             val response = newsRepository.getBreakingNews(countryCode,breakingNewsPage)
             //here the breakingNewsMutableLiveData will have the value of either Resource.Success or Resource.Error and inside this Resource will have either
-            //the data or the error message
+            //the data or the error message and based on that type will give the postValue variable of type mutableLiveData the needed value
             breakingNews.postValue(handleNewsResponse(response))
         }
     }
 
+    //check to apply core way to check network response is success , error or loading
     private fun handleNewsResponse(response: Response<NewsResponse>):Resource<NewsResponse>{
         //checking if response is success , will return Resource.Success and the response itself
         if(response.isSuccessful){
