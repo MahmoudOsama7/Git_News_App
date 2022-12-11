@@ -1,6 +1,8 @@
 package com.androiddevs.mvvmnewsapp.ui.fragments
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -10,6 +12,7 @@ import com.androiddevs.mvvmnewsapp.R
 import com.androiddevs.mvvmnewsapp.ui.NewsActivity
 import com.androiddevs.mvvmnewsapp.ui.NewsViewModel
 import com.androiddevs.mvvmnewsapp.ui.adapters.NewsAdapter
+import com.androiddevs.mvvmnewsapp.ui.util.Resource
 import kotlinx.android.synthetic.main.fragment_breaking_news.*
 
 //instead of creating an empty fragment we can create a class and inherit the fragment and inside the bracket
@@ -18,6 +21,7 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
     lateinit var viewModel: NewsViewModel
     lateinit var newsAdapter:NewsAdapter
+    val TAG="BreakingNewsFragment"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,8 +44,35 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
         //because the function parameter is the last parameter and we can move the curly brackets outside these brackets ()
         //or like this       viewModel.breakingNews.observe(viewLifecycleOwner, this) which is done after implementing the Observer inteerface and gives it the needed
         //type , it's like a callback provided by this interface
-        viewModel.breakingNews.observe(viewLifecycleOwner, Observer {  })
+        viewModel.breakingNews.observe(viewLifecycleOwner, Observer {response->
+            when(response){
+                is Resource.Success->{
+                    hideProgressBar()
+                    response.data?.let {newsRespose->
+                        newsAdapter.differ.submitList(newsRespose.articles)
+                    }
+                }
+                is Resource.Error->{
+                    hideProgressBar()
+                    response.data?.let { message->
+                        Log.e(TAG,"An error occured $message")
+                    }
+                }
+                is Resource.Loading->{
+                    showProgressBar()
+                }
+            }
+        })
     }
+
+    private fun hideProgressBar() {
+        paginationProgressBar.visibility=View.INVISIBLE
+    }
+
+    private fun showProgressBar() {
+        paginationProgressBar.visibility=View.VISIBLE
+    }
+
 
     //setupRecyclerView
     private fun setupRecyclerView(){
