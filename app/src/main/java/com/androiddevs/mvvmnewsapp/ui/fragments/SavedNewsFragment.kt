@@ -18,12 +18,12 @@ class SavedNewsFragment:Fragment(R.layout.fragment_saved_news) {
     lateinit var savedNewsAdapter: NewsAdapter
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel= (activity as NewsActivity).viewModel
+        viewModel = (activity as NewsActivity).viewModel
         setupRecyclerView()
         onItemClick()
     }
 
-    private fun onItemClick(){
+    private fun onItemClick() {
         //as already in the newsAdapter , we have             setOnClickListener {
         //                onItemClickListener?.let {
         //                    it(article) }
@@ -36,19 +36,20 @@ class SavedNewsFragment:Fragment(R.layout.fragment_saved_news) {
         // so what inside the curly brackets is the parameter passed to this function , when we say it we say that it will be passed from the function setOnClickListener
         //itself , not from here
         savedNewsAdapter.setOnItemClickListener {
-            val bundle=Bundle().apply {
-                putSerializable("article",it)
+            val bundle = Bundle().apply {
+                putSerializable("article", it)
             }
-            findNavController().navigate(R.id.action_searchNewsFragment_to_articleFragment,bundle)
+            findNavController().navigate(R.id.action_searchNewsFragment_to_articleFragment, bundle)
         }
     }
 
     //setupRecyclerView
-    private fun setupRecyclerView(){
-        savedNewsAdapter= NewsAdapter()
+    private fun setupRecyclerView() {
+        savedNewsAdapter = NewsAdapter()
         rvSavedNews.apply {
-            adapter=savedNewsAdapter
-            layoutManager= LinearLayoutManager(activity)
+            adapter = savedNewsAdapter
+            layoutManager = LinearLayoutManager(activity)
         }
 
     }
+}
