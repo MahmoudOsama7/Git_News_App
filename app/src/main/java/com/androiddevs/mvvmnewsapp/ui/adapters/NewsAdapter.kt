@@ -20,6 +20,8 @@ import kotlinx.android.synthetic.main.item_article_preview.view.*
  *
  */
 
+
+
 class NewsAdapter :RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>(){
 
     inner class ArticleViewHolder(itemView:View):RecyclerView.ViewHolder(itemView)
@@ -96,7 +98,15 @@ class NewsAdapter :RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>(){
     //returns nothing
     //inside this function we set the function listener we created with the function listener passed
     fun setOnItemClickListener(listener:(Article)->Unit){
-        //here the onItemClickListener will take the value of passed listener
+        //here the onItemClickListener will take the value of passed listener meaning that the trailing lambda passed onItemClickListener equalized by the
+        //the trailing lambda passed when calling setOnItemClickListener and the onItemClickListener or listener is variable of type lambda function , taking
+        //article as parameter and this paramter already passed when clicking on the item in recyclerview and this happens here
+        /**
+         *             setOnClickListener {
+        onItemClickListener?.let {
+        it(article) }
+        }
+         */
         onItemClickListener=listener
     }
 
