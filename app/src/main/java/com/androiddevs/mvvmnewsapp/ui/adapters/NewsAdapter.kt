@@ -21,6 +21,47 @@ import kotlinx.android.synthetic.main.item_article_preview.view.*
  */
 
 
+/**
+ * for the listener we created , we are passing the parameter from a place and the implementation from another place
+ * we are already creating a recyclerView in the fragments and when calling onCreate from the fragments we are
+ * 1-setting the recyclerView
+ * 2-calling the setOnItemClickListener function that passes the implementation we need to the function which we defined as to navigate
+ * also we informed the function in the fragments to use (it) which mean that the paramter will be passed from the function setOnItemClickListener
+ * not passed from calling the function in the fragments so now
+ *         savedNewsAdapter.setOnItemClickListener { article ->
+val bundle = Bundle().apply {
+putSerializable("article", article)
+}
+findNavController().navigate(R.id.action_searchNewsFragment_to_articleFragment, bundle)
+} and the function itself in the recyclerview is defined as
+fun setOnItemClickListener(listener:(Article)->Unit){
+//here the onItemClickListener will take the value of passed listener meaning that the trailing lambda passed onItemClickListener equalized by the
+//the trailing lambda passed when calling setOnItemClickListener and the onItemClickListener or listener is variable of type lambda function , taking
+//article as parameter and this paramter already passed when clicking on the item in recyclerview and this happens here
+/**
+ *             setOnClickListener {
+onItemClickListener?.let {
+it(article) }
+}
+*/
+onItemClickListener=listener
+} meaning that we are now passing the function as parameter to the function inside the recyclerview so now setOnItemClick has implementation passed to it
+ * so when we press on any itemView in the recyclerView we are calling the setOnClickListener for the view which is triggered when we click on
+ * any item (call back of the recyclerView normally) and then inside it we are saying that
+ *             setOnClickListener {
+onItemClickListener?.let {
+it(article) }
+}
+ meaning that we are passing the article we clicked on as parameter to the variable of type function onItemClickListener so now
+ we passed the implementation from the fragments at onCreate and we passed the article itself when we click so at the momeent we click we have implemetation
+ and parameter so the function is called
+
+ another important note that
+ at the oncreate we are passing the implementation , but we did not call the function so without the onclickitem in the recyclerview  (recyclerview normal
+call back) the function will not be triggered , we trigger it when we are callin the onItemclick.apply as to pass the parameter needed before calling it
+let doe snot call function , let makes the block of the function executable if it's value not null
+ in other words for this ex if the onItemClickListener is having implementation = null it will not be performed
+ */
 
 class NewsAdapter :RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>(){
 
@@ -37,10 +78,6 @@ class NewsAdapter :RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>(){
         override fun areContentsTheSame(oldItem: Article, newItem: Article): Boolean {
             return oldItem==newItem
         }
-    }
-
-    fun clearList(){
-
     }
 
     //creating variable that takes the recyclerView adapter created and the differCallback created

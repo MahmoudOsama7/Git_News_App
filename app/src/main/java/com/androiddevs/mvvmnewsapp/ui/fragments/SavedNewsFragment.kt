@@ -35,9 +35,11 @@ class SavedNewsFragment:Fragment(R.layout.fragment_saved_news) {
         //keep the curly brackets outside , so here the curly brackets outside
         // so what inside the curly brackets is the parameter passed to this function , when we say it we say that it will be passed from the function setOnClickListener
         //itself , not from here
-        savedNewsAdapter.setOnItemClickListener {
+        // for the lambda function , we have it like this {argument->body} which mean that the argument is the argument
+        //passed and then comes the body which is the code of the lambda function or in other word what will this lambda function do
+        savedNewsAdapter.setOnItemClickListener { article ->
             val bundle = Bundle().apply {
-                putSerializable("article", it)
+                putSerializable("article", article)
             }
             findNavController().navigate(R.id.action_searchNewsFragment_to_articleFragment, bundle)
         }
