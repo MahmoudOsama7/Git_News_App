@@ -7,6 +7,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.androiddevs.mvvmnewsapp.R
 import com.androiddevs.mvvmnewsapp.ui.NewsActivity
@@ -28,6 +29,49 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
         //this is to use the viewModel object created in the activity
         viewModel= (activity as NewsActivity).viewModel
         setupRecyclerView()
+        loadData()
+        onItemClick()
+    }
+
+    private fun hideProgressBar() {
+        paginationProgressBar.visibility=View.INVISIBLE
+    }
+
+    private fun showProgressBar() {
+        paginationProgressBar.visibility=View.VISIBLE
+    }
+    
+    private fun onItemClick(){
+        //as already in the newsAdapter , we have             setOnClickListener {
+        //                onItemClickListener?.let {
+        //                    it(article) }
+        //            }  when clicking on any item in the recyclerView , so when clicking , the onItemClickListener is variable of type lambda function
+        //that takes the article thanks to this line of code it(article) that means it "the method" takes the article parameter so now when clicking on any itemview
+        //article is passed to the lambda function
+        //then here calling newsAdapter.setOnItemClickListener
+        //newsAdapter.setOnItemClickListener is a function and since last parameter is a lambda function so can use it like this setOnClickListener({}) or
+        //keep the curly brackets outside , so here the curly brackets outside
+        // so what inside the curly brackets is the parameter passed to this function , when we say it we say that it will be passed from the function setOnClickListener
+        //itself , not from here
+        newsAdapter.setOnItemClickListener {
+            val bundle=Bundle().apply {
+                putSerializable("article",it)
+            }
+            findNavController().navigate(R.id.action_breakingNewsFragment_to_articleFragment,bundle)
+        }
+    }
+
+
+    //setupRecyclerView
+    private fun setupRecyclerView(){
+        newsAdapter= NewsAdapter()
+        rvBreakingNews.apply {
+            adapter=newsAdapter
+            layoutManager=LinearLayoutManager(activity)
+        }
+    }
+    
+    private fun loadData(){
         //when observing on liveData we create the mthod like this that we pass two parameter , the viewLifeCycleOwner and call back desribes as the function that
         //will be triggered if any change happens to this Observable that we observe to which is the LiveData this function is generated when we call pass Observer as new parameter which means creating new Observer
         //so having access to the callback of this Observer , it's the same as setOmClickListener, as we say x.setOnClickListener(Listener{}) in kotlin or x.setOnClickListener(new OnClickListener{}) in java
@@ -63,23 +107,5 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
                 }
             }
         })
-    }
-
-    private fun hideProgressBar() {
-        paginationProgressBar.visibility=View.INVISIBLE
-    }
-
-    private fun showProgressBar() {
-        paginationProgressBar.visibility=View.VISIBLE
-    }
-
-
-    //setupRecyclerView
-    private fun setupRecyclerView(){
-        newsAdapter= NewsAdapter()
-        rvBreakingNews.apply {
-            adapter=newsAdapter
-            layoutManager=LinearLayoutManager(activity)
-        }
     }
 }

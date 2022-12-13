@@ -8,6 +8,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.androiddevs.mvvmnewsapp.R
 import com.androiddevs.mvvmnewsapp.ui.NewsActivity
@@ -36,7 +37,7 @@ class SearchNewsFragment:Fragment(R.layout.fragment_search_news) {
         setupRecyclerView()
         setupSearch()
         loadData()
-
+        onItemClick()
 
     }
     private fun hideProgressBar() {
@@ -91,4 +92,24 @@ class SearchNewsFragment:Fragment(R.layout.fragment_search_news) {
             }
         }
     }
+    private fun onItemClick(){
+        //as already in the newsAdapter , we have             setOnClickListener {
+        //                onItemClickListener?.let {
+        //                    it(article) }
+        //            }  when clicking on any item in the recyclerView , so when clicking , the onItemClickListener is variable of type lambda function
+        //that takes the article thanks to this line of code it(article) that means it "the method" takes the article parameter so now when clicking on any itemview
+        //article is passed to the lambda function
+        //then here calling newsAdapter.setOnItemClickListener
+        //newsAdapter.setOnItemClickListener is a function and since last parameter is a lambda function so can use it like this setOnClickListener({}) or
+        //keep the curly brackets outside , so here the curly brackets outside
+        // so what inside the curly brackets is the parameter passed to this function , when we say it we say that it will be passed from the function setOnClickListener
+        //itself , not from here
+        searchNewsAdapter.setOnItemClickListener {
+            val bundle=Bundle().apply {
+                putSerializable("article",it)
+            }
+            findNavController().navigate(R.id.action_searchNewsFragment_to_articleFragment,bundle)
+        }
+    }
+
 }
