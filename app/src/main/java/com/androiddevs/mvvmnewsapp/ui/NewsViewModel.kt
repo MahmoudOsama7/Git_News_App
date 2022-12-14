@@ -3,6 +3,7 @@ package com.androiddevs.mvvmnewsapp.ui
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.androiddevs.mvvmnewsapp.ui.models.Article
 import com.androiddevs.mvvmnewsapp.ui.models.NewsResponse
 import com.androiddevs.mvvmnewsapp.ui.repository.NewsRepository
 import com.androiddevs.mvvmnewsapp.ui.util.Resource
@@ -36,26 +37,12 @@ class NewsViewModel(
             val response = newsRepository.getBreakingNews(countryCode,breakingNewsPage)
             //here the breakingNewsMutableLiveData will have the value of either Resource.Success or Resource.Error and inside this Resource will have either
             //the data or the error message and based on that type will give the postValue variable of type mutableLiveData the needed value
-            breakingNews.postValue(handleNewsResponse(response))
+            breakingNews.postValue(handleBreakingNewsResponse(response))
         }
     }
-
-
-    fun getSearchNews(searchQuery:String){
-        //viewModelScope will make sure this coroutine methods stays a ive as along as the viewModel is alive
-        viewModelScope.launch {
-            //start the loading that represents the loading of network call so when the method is called a loading is happening
-            searchNews.postValue(Resource.Loading())
-            val response = newsRepository.searchNews(searchQuery,searchNewsPage)
-            //here the breakingNewsMutableLiveData will have the value of either Resource.Success or Resource.Error and inside this Resource will have either
-            //the data or the error message and based on that type will give the postValue variable of type mutableLiveData the needed value
-            searchNews.postValue(handleNewsResponse(response))
-        }
-    }
-
 
     //check to apply core way to check network response is success , error or loading
-    private fun handleNewsResponse(response: Response<NewsResponse>):Resource<NewsResponse>{
+    private fun handleBreakingNewsResponse(response: Response<NewsResponse>):Resource<NewsResponse>{
         //checking if response is success , will return Resource.Success and the response itself
         if(response.isSuccessful){
             //after checking response is successful , will check it's not null and will use let that only perform the inside block of code if response not null
@@ -65,6 +52,18 @@ class NewsViewModel(
         }
         //checking if response is error , will return Resource.Error and the error message
         return Resource.Error(response.message())
+    }
+
+    fun getSearchNews(searchQuery:String){
+        //viewModelScope will make sure this coroutine methods stays a ive as along as the viewModel is alive
+        viewModelScope.launch {
+            //start the loading that represents the loading of network call so when the method is called a loading is happening
+            searchNews.postValue(Resource.Loading())
+            val response = newsRepository.searchNews(searchQuery,searchNewsPage)
+            //here the breakingNewsMutableLiveData will have the value of either Resource.Success or Resource.Error and inside this Resource will have either
+            //the data or the error message and based on that type will give the postValue variable of type mutableLiveData the needed value
+            searchNews.postValue(handleSearchNewsResponse(response))
+        }
     }
 
 
@@ -80,5 +79,16 @@ class NewsViewModel(
         return Resource.Error(response.message())
     }
 
+    //we use a coroutine scope which is viewModel scope as the function we will call inside is a suspend function
+    fun saveArticle(article: Article)=viewModelScope.launch {
+        newsRepository.upsert(article)
+    }
+    //function to get savedNews , normal function as using live data , TODO will change to flow
+    fun getSavedNews()=newsRepository.getSavedNews()
+
+    //suspend function to delete article
+    fun deleteArticle(article: Article)=viewModelScope.launch {
+        newsRepository.deleteArticle(article)
+    }
 
 }

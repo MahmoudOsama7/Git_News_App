@@ -28,7 +28,8 @@ import com.androiddevs.mvvmnewsapp.ui.models.Article
 interface ArticlesDao {
 
     /**
-     *  * we create function upsert that will update the database with the article and gives back response which will here be value of type long of the id of this article
+     *  * we create function upsert that will update the database with the article and gives back response which will here be value of type
+     *  long of the id of this article
      * in the table
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -39,6 +40,8 @@ interface ArticlesDao {
      * query by using sql language to select everything from articles table that we defined it using the entity annotation in articles data class
      *
      * will make this function normally not suspend as the response will be liveData and live data does not work with suspend function
+     *
+     * later on change liveData to stateFlow
      */
 
     @Query("SELECT * FROM articles")

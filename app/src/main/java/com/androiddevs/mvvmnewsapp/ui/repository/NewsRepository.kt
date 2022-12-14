@@ -2,6 +2,7 @@ package com.androiddevs.mvvmnewsapp.ui.repository
 
 import com.androiddevs.mvvmnewsapp.ui.api.RetrofitInstance
 import com.androiddevs.mvvmnewsapp.ui.db.ArticleDatabase
+import com.androiddevs.mvvmnewsapp.ui.models.Article
 
 class NewsRepository(
     val db:ArticleDatabase
@@ -11,4 +12,14 @@ class NewsRepository(
 
     suspend fun searchNews(searchQuery:String,pageNumber: Int)=
         RetrofitInstance.api.searchForNews(searchQuery=searchQuery, pageNumber = pageNumber)
+
+
+    //suspend function that will add the needed article that the user liked to room database
+    //by getting the reference of room abd then calling the DAO interface then calling the needed function
+    suspend fun upsert(article:Article)=db.getArticleDao().upsert(article)
+
+    //normal function not suspend as using liveData and live data does not require suspend fun
+    fun getSavedNews()=db.getArticleDao().getAllArticles()
+
+    suspend fun deleteArticle(article: Article)=db.getArticleDao().deleteArticle(article)
 }
