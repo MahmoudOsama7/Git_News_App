@@ -4,21 +4,28 @@ import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.AbsListView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.androiddevs.mvvmnewsapp.R
 import com.androiddevs.mvvmnewsapp.ui.NewsActivity
 import com.androiddevs.mvvmnewsapp.ui.NewsViewModel
 import com.androiddevs.mvvmnewsapp.ui.adapters.NewsAdapter
+import com.androiddevs.mvvmnewsapp.ui.util.Constants.Companion.QUERY_PAGE_SIZE
 import com.androiddevs.mvvmnewsapp.ui.util.Resource
 import kotlinx.android.synthetic.main.fragment_breaking_news.*
 
 //instead of creating an empty fragment we can create a class and inherit the fragment and inside the bracket
 //we put the payout of this fragment
 class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
+    var isLoading=false
+    var isLastPage=false
+    var isScrolling=false
+
 
     lateinit var viewModel: NewsViewModel
     lateinit var newsAdapter:NewsAdapter
@@ -58,6 +65,45 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
                 putSerializable("article",it)
             }
             findNavController().navigate(R.id.action_breakingNewsFragment_to_articleFragment,bundle)
+        }
+    }
+
+    private fun paginate(){
+        val scrollListener=object:RecyclerView.OnScrollListener(){
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                //this if check means that we are currently scrolling
+                if(newState==AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                    isScrolling=true
+                }
+            }
+            //to get the state when scrolled we need to do some calculations
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager=recyclerView.layoutManager as LinearLayoutManager
+                //getting first visible item by getting first visible position in recyclerView
+                val firstVisibleItemPosition=layoutManager.findFirstVisibleItemPosition()
+                //getting visible count meaning number of items in list we can see when scrolling
+                val visibleItemCount=layoutManager.childCount
+                //getting total item count which mean total amount of items in the list
+                val totalItemCount=layoutManager.itemCount
+                //checking if we are not loading and not in the last page
+                //meaning that we are at list and scrolling but did not reach the last page and did not load
+                //any new page list
+                val isNotLoadingAndNotLastPage=!isLoading && !isLastPage
+                //getting that we are at the last item , which to know we need to get first visible item position
+                //and add to it the total item visible count that we can see at the moment we are scrolling
+                //if more than or equal total item count in the list so we reached last element
+                //firstVisibleItemposisiton is not constant , it's increasing because we are scrolling in the list
+                val isAtLastItem=firstVisibleItemPosition+visibleItemCount >=totalItemCount
+                //checking is not at begining by checking value of firstVisibleItemPosition
+                val isNotAtBegining=firstVisibleItemPosition>=0
+                //checking if total is more than visible by checking if totalItemCount of the page is > or =
+                //size of page
+                val isTotalMoreThanVisible=totalItemCount>=QUERY_PAGE_SIZE
+                val shouldPaginate=isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBegining
+                        && isTotalMoreThanVisible && isScrolling
+            }
         }
     }
 

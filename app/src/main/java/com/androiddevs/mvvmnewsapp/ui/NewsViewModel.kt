@@ -25,6 +25,11 @@ class NewsViewModel(
     var searchNewsPage=1
 
 
+
+    // for pagination:
+    var breakingNewsResponse:NewsResponse?=null
+    var searchNewsResponse:NewsResponse?=null
+
     init {
         getBreakingNews("us")
     }
@@ -47,7 +52,22 @@ class NewsViewModel(
         if(response.isSuccessful){
             //after checking response is successful , will check it's not null and will use let that only perform the inside block of code if response not null
             response.body()?.let {  resultResponse->
-                return Resource.Success(resultResponse)
+                //when getting response , increase the page
+                //then check if the breakingNewsResponse is null meaning still did not et the first list
+                //so equalize breaking news response with the first list got
+                //else so we already received list in first page before so add the next list page to the first list page
+                breakingNewsPage++
+                if(breakingNewsResponse==null){
+                    breakingNewsResponse=resultResponse
+                }else{
+
+                    val oldArticles=breakingNewsResponse?.articles
+                    val newArticles=resultResponse.articles
+                    oldArticles?.addAll(newArticles)
+                }
+                //return the breakingNewsResponse but if the breakingNewsRepsonse is null meaning still did not get the first
+                //page so retun result response instead
+                return Resource.Success(breakingNewsResponse?:resultResponse)
             }
         }
         //checking if response is error , will return Resource.Error and the error message
@@ -72,7 +92,22 @@ class NewsViewModel(
         if(response.isSuccessful){
             //after checking response is successful , will check it's not null and will use let that only perform the inside block of code if response not null
             response.body()?.let {  resultResponse->
-                return Resource.Success(resultResponse)
+                //when getting response , increase the page
+                //then check if the breakingNewsResponse is null meaning still did not et the first list
+                //so equalize breaking news response with the first list got
+                //else so we already received list in first page before so add the next list page to the first list page
+                searchNewsPage++
+                if(searchNewsResponse==null){
+                    searchNewsResponse=resultResponse
+                }else{
+
+                    val oldArticles=searchNewsResponse?.articles
+                    val newArticles=resultResponse.articles
+                    oldArticles?.addAll(newArticles)
+                }
+                //return the breakingNewsResponse but if the breakingNewsRepsonse is null meaning still did not get the first
+                //page so retun result response instead
+                return Resource.Success(searchNewsResponse?:resultResponse)
             }
         }
         //checking if response is error , will return Resource.Error and the error message
