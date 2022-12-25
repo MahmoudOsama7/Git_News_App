@@ -5,5 +5,6 @@ class Constants {
         const val API_KEY="469236bab7514a5db30a8530061d88a0"
         const val BASE_URL="https://newsapi.org"
         const val SEARCH_NEWS_TIME_DELAY=1000L
+        const val QUERY_PAGE_SIZE=20
     }
 }
