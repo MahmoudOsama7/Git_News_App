@@ -7,6 +7,7 @@ import com.androiddevs.mvvmnewsapp.ui.models.Article
 import com.androiddevs.mvvmnewsapp.ui.models.NewsResponse
 import com.androiddevs.mvvmnewsapp.ui.repository.NewsRepository
 import com.androiddevs.mvvmnewsapp.ui.util.Resource
+import kotlinx.coroutines.flow.MutableStateFlow
 //import kotlinx.coroutines.ExperimentalCoroutinesApi
 //import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -15,11 +16,11 @@ import retrofit2.Response
 class NewsViewModel(
     val newsRepository: NewsRepository
 ):ViewModel() {
-    val breakingNews:MutableLiveData<Resource<NewsResponse>> =MutableLiveData()
+//    val breakingNews:MutableLiveData<Resource<NewsResponse>> =MutableLiveData()
     //will set the page number here and use pagination reference from here as to avoid the problems of configuration change to affect the logic
     var breakingNewsPage=1
 //    using mutabeStateFlow instead of liveData to handle loading and error and success
-//    private val breakingNewsTwo = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading())
+    val breakingNewsTwo = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading())
 
     val searchNews:MutableLiveData<Resource<NewsResponse>> =MutableLiveData()
     var searchNewsPage=1
@@ -38,11 +39,13 @@ class NewsViewModel(
         //viewModelScope will make sure this coroutine methods stays a ive as along as the viewModel is alive
         viewModelScope.launch {
             //start the loading that represents the loading of network call so when the method is called a loading is happening
-            breakingNews.postValue(Resource.Loading())
+//            breakingNews.postValue(Resource.Loading())
+            breakingNewsTwo.value=Resource.Loading()
             val response = newsRepository.getBreakingNews(countryCode,breakingNewsPage)
             //here the breakingNewsMutableLiveData will have the value of either Resource.Success or Resource.Error and inside this Resource will have either
             //the data or the error message and based on that type will give the postValue variable of type mutableLiveData the needed value
-            breakingNews.postValue(handleBreakingNewsResponse(response))
+            breakingNewsTwo.value=handleBreakingNewsResponse(response)
+//            breakingNews.postValue(handleBreakingNewsResponse(response))
         }
     }
 

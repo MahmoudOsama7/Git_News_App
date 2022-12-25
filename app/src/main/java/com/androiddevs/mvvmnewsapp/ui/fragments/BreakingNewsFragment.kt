@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.AbsListView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,8 @@ import com.androiddevs.mvvmnewsapp.ui.adapters.NewsAdapter
 import com.androiddevs.mvvmnewsapp.ui.util.Constants.Companion.QUERY_PAGE_SIZE
 import com.androiddevs.mvvmnewsapp.ui.util.Resource
 import kotlinx.android.synthetic.main.fragment_breaking_news.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 //instead of creating an empty fragment we can create a class and inherit the fragment and inside the bracket
 //we put the payout of this fragment
@@ -128,7 +131,7 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
         }
     }
     
-    private fun loadData(){
+    private fun loadData() {
         //when observing on liveData we create the mthod like this that we pass two parameter , the viewLifeCycleOwner and call back desribes as the function that
         //will be triggered if any change happens to this Observable that we observe to which is the LiveData this function is generated when we call pass Observer as new parameter which means creating new Observer
         //so having access to the callback of this Observer , it's the same as setOmClickListener, as we say x.setOnClickListener(Listener{}) in kotlin or x.setOnClickListener(new OnClickListener{}) in java
@@ -145,37 +148,71 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
         //because the function parameter is the last parameter and we can move the curly brackets outside these brackets ()
         //or like this       viewModel.breakingNews.observe(viewLifecycleOwner, this) which is done after implementing the Observer inteerface and gives it the needed
         //type , it's like a callback provided by this interface
-        viewModel.breakingNews.observe(viewLifecycleOwner, Observer {response->
-            when(response){
-                is Resource.Success->{
-                    hideProgressBar()
-                    response.data?.let {newsRespose->
-                        newsAdapter.differ.submitList(newsRespose.articles)
-                        //totalResults is a parameter in the class newsResponse that define the total size of the pages retrieved in total
-                        //we divide it by QUERY_PAGE_SIZE to know how many pages we have to load
-                        //why +2  , as the division result always rounded so not getting full pages so we add 1 to get full pages ,
-                        // also the last page is empty respose
-                        //so we have to add another 1 to avoid this
-                        val totalPages=newsRespose.totalResults/ QUERY_PAGE_SIZE +2
-                        //if we are at the last page so viewModel.breakingNewsPage==totalPages will give result as true
-                        //so if false , we are not at the last page as did not reach total pages
-                        isLastPage=viewModel.breakingNewsPage==totalPages
+//        viewModel.breakingNews.observe(viewLifecycleOwner, Observer { response ->
+//            when (response) {
+//                is Resource.Success -> {
+//                    hideProgressBar()
+//                    response.data?.let { newsRespose ->
+//                        newsAdapter.differ.submitList(newsRespose.articles)
+//                        //totalResults is a parameter in the class newsResponse that define the total size of the pages retrieved in total
+//                        //we divide it by QUERY_PAGE_SIZE to know how many pages we have to load
+//                        //why +2  , as the division result always rounded so not getting full pages so we add 1 to get full pages ,
+//                        // also the last page is empty respose
+//                        //so we have to add another 1 to avoid this
+//                        val totalPages = newsRespose.totalResults / QUERY_PAGE_SIZE + 2
+//                        //if we are at the last page so viewModel.breakingNewsPage==totalPages will give result as true
+//                        //so if false , we are not at the last page as did not reach total pages
+//                        isLastPage = viewModel.breakingNewsPage == totalPages
+//
+//                        if (isLastPage) {
+//                            rvBreakingNews.setPadding(0, 0, 0, 0)
+//                        }
+//                    }
+//                }
+//                is Resource.Error -> {
+//                    hideProgressBar()
+//                    response.data?.let { message ->
+//                        Log.e(TAG, "An error occured $message")
+//                    }
+//                }
+//                is Resource.Loading -> {
+//                    showProgressBar()
+//                }
+//            }
+//        })
+        lifecycleScope.launch {
+            viewModel.breakingNewsTwo.collectLatest { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        response.data?.let { newsRespose ->
+                            newsAdapter.differ.submitList(newsRespose.articles)
+                            //totalResults is a parameter in the class newsResponse that define the total size of the pages retrieved in total
+                            //we divide it by QUERY_PAGE_SIZE to know how many pages we have to load
+                            //why +2  , as the division result always rounded so not getting full pages so we add 1 to get full pages ,
+                            // also the last page is empty respose
+                            //so we have to add another 1 to avoid this
+                            val totalPages = newsRespose.totalResults / QUERY_PAGE_SIZE + 2
+                            //if we are at the last page so viewModel.breakingNewsPage==totalPages will give result as true
+                            //so if false , we are not at the last page as did not reach total pages
+                            isLastPage = viewModel.breakingNewsPage == totalPages
 
-                        if(isLastPage){
-                            rvBreakingNews.setPadding(0,0,0,0)
+                            if (isLastPage) {
+                                rvBreakingNews.setPadding(0, 0, 0, 0)
+                            }
+                        }
+                    }
+                    is Resource.Loading ->{
+                        showProgressBar()
+                    }
+                    is Resource.Error ->{
+                        hideProgressBar()
+                        response.data?.let { message ->
+                            Log.e(TAG, "An error occured $message")
                         }
                     }
                 }
-                is Resource.Error->{
-                    hideProgressBar()
-                    response.data?.let { message->
-                        Log.e(TAG,"An error occured $message")
-                    }
-                }
-                is Resource.Loading->{
-                    showProgressBar()
-                }
             }
-        })
+        }
     }
 }
