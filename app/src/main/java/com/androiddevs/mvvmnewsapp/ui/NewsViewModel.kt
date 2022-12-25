@@ -18,7 +18,7 @@ class NewsViewModel(
     val breakingNews:MutableLiveData<Resource<NewsResponse>> =MutableLiveData()
     //will set the page number here and use pagination reference from here as to avoid the problems of configuration change to affect the logic
     var breakingNewsPage=1
-    //using mutabeStateFlow instead of liveData to handle loading and error and success
+//    using mutabeStateFlow instead of liveData to handle loading and error and success
 //    private val breakingNewsTwo = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading())
 
     val searchNews:MutableLiveData<Resource<NewsResponse>> =MutableLiveData()

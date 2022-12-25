@@ -112,9 +112,6 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
                     viewModel.getBreakingNews("us")
                     isScrolling=false
 
-                }else{
-                    //TODO not the correct place
-                    rvBreakingNews.setPadding(0,0,0,0)
                 }
             }
         }
@@ -156,12 +153,17 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
                         newsAdapter.differ.submitList(newsRespose.articles)
                         //totalResults is a parameter in the class newsResponse that define the total size of the pages retrieved in total
                         //we divide it by QUERY_PAGE_SIZE to know how many pages we have to load
-                        //why +2  , as the division result always rounded so not getting full pages so we add 1 to get full pages , also the last page is empty respose
+                        //why +2  , as the division result always rounded so not getting full pages so we add 1 to get full pages ,
+                        // also the last page is empty respose
                         //so we have to add another 1 to avoid this
                         val totalPages=newsRespose.totalResults/ QUERY_PAGE_SIZE +2
                         //if we are at the last page so viewModel.breakingNewsPage==totalPages will give result as true
                         //so if false , we are not at the last page as did not reach total pages
                         isLastPage=viewModel.breakingNewsPage==totalPages
+
+                        if(isLastPage){
+                            rvBreakingNews.setPadding(0,0,0,0)
+                        }
                     }
                 }
                 is Resource.Error->{
