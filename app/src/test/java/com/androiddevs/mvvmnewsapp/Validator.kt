@@ -1,4 +1,4 @@
-package com.androiddevs.mvvmnewsapp.ui
+package com.androiddevs.mvvmnewsapp
 
 object Validator {
     fun validInput(searchQuery:String):Boolean{

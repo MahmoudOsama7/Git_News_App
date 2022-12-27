@@ -1,4 +1,4 @@
-package com.androiddevs.mvvmnewsapp.ui
+package com.androiddevs.mvvmnewsapp
 
 
 import com.google.common.truth.Truth.assertThat
@@ -28,11 +28,16 @@ class ValidatorTest{
      *
      * ex succeed : output ->
      * Process finished with exit code 0
+     *
+     *
+     * so in general in test , we put all test cases here and check for it if valid or not by using functions here
+     * as here for ex we gave a test case that searchQuery must contain value and not empty string
+     * to be valid
      */
     @Test
     fun whenInputIsValid(){
         val searchQuery="us"
-        val result=Validator.validInput(searchQuery)
+        val result= Validator.validInput(searchQuery)
         assertThat(result).isEqualTo(true)
     }
 }
