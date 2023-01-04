@@ -39,5 +39,6 @@ class ValidatorTest{
         val searchQuery="us"
         val result= Validator.validInput(searchQuery)
         assertThat(result).isEqualTo(true)
+
     }
 }
