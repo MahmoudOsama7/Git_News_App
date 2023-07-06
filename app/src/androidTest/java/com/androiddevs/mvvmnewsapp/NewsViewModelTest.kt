@@ -19,7 +19,7 @@ class NewsViewModelTest :TestCase(){
     public override fun setUp() {
         super.setUp()
         val context=ApplicationProvider.getApplicationContext<android.content.Context>()
-        
+
     }
 
 }
